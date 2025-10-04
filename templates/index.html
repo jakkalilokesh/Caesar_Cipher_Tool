@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar Cipher | Secure Text Encryption</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Caesar Cipher</h1>
+            </div>
+            <p class="subtitle">Secure Text Encryption & Decryption Tool</p>
+        </header>
+
+        <!-- Alert Message -->
+        {% if alert_message %}
+        <div class="alert alert-{{ alert_type }}">
+            <i class="fas {% if alert_type == 'success' %}fa-check-circle{% elif alert_type == 'error' %}fa-exclamation-triangle{% elif alert_type == 'warning' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+            <span>{{ alert_message }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="panel-section">
+                    <h3><i class="fas fa-tasks"></i> Operation Settings</h3>
+                    
+                    <!-- Mode Selection -->
+                    <div class="form-group">
+                        <label class="form-label">Select Operation</label>
+                        <div class="mode-buttons">
+                            <form method="POST" class="mode-form">
+                                <input type="hidden" name="input_text" value="{{ input_text }}">
+                                <input type="hidden" name="output_text" value="{{ output_text }}">
+                                <input type="hidden" name="shift" value="{{ shift }}">
+                                <button type="submit" name="mode" value="encrypt" class="mode-btn {% if mode == 'encrypt' %}active{% endif %}">
+                                    <i class="fas fa-lock"></i>
+                                    Encrypt
+                                </button>
+                                <button type="submit" name="mode" value="decrypt" class="mode-btn {% if mode == 'decrypt' %}active{% endif %}">
+                                    <i class="fas fa-unlock"></i>
+                                    Decrypt
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Shift Control -->
+                    <div class="form-group">
+                        <label for="shift" class="form-label">Shift Value (1-25)</label>
+                        <div class="shift-control">
+                            <input type="number" id="shift" name="shift" min="1" max="25" value="{{ shift }}" class="shift-input">
+                            <div class="shift-info">
+                                <span class="shift-example">Example: A → {% if mode == 'encrypt' %}{{ ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][shift-1] }}{% else %}{{ ['Z', 'Y', 'X', 'W', 'V', 'U', 'T', 'S', 'R', 'Q', 'P', 'O', 'N', 'M', 'L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B'][shift-1] }}{% endif %}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Processing Area -->
+            <form method="POST" class="processing-form">
+                <input type="hidden" name="mode" value="{{ mode }}">
+                
+                <div class="text-container">
+                    <!-- Input Section -->
+                    <div class="text-section">
+                        <div class="section-header">
+                            <h3>
+                                <i class="fas fa-keyboard"></i>
+                                {% if mode == 'encrypt' %}Original Text{% else %}Encrypted Text{% endif %}
+                            </h3>
+                            <div class="section-actions">
+                                <button type="submit" name="clear_input" class="action-btn clear-btn" title="Clear Input">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <textarea name="input_text" class="text-area input-area" placeholder="Enter your text here...">{{ input_text }}</textarea>
+                        <div class="text-meta">
+                            <span class="char-count">{{ input_text|length }} characters</span>
+                            {% if input_text %}
+                            <span class="word-count">{{ input_text.split()|length }} words</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Process Button -->
+                    <div class="process-section">
+                        <button type="submit" name="process" class="process-btn {% if mode == 'encrypt' %}encrypt{% else %}decrypt{% endif %}">
+                            <i class="fas {% if mode == 'encrypt' %}fa-arrow-right{% else %}fa-arrow-left{% endif %}"></i>
+                            <span>{% if mode == 'encrypt' %}Encrypt{% else %}Decrypt{% endif %} Text</span>
+                        </button>
+                        
+                        <div class="clear-all">
+                            <button type="submit" name="clear_all" class="secondary-btn">
+                                <i class="fas fa-broom"></i>
+                                Clear All
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Output Section -->
+                    <div class="text-section">
+                        <div class="section-header">
+                            <h3>
+                                <i class="fas fa-file-signature"></i>
+                                {% if mode == 'encrypt' %}Encrypted Text{% else %}Decrypted Text{% endif %}
+                            </h3>
+                            <div class="section-actions">
+                                <button type="submit" name="clear_output" class="action-btn clear-btn" title="Clear Output">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <textarea class="text-area output-area" readonly>{{ output_text }}</textarea>
+                        <div class="text-meta">
+                            <span class="char-count">{{ output_text|length }} characters</span>
+                            <span class="status">{% if output_text %}{% if mode == 'encrypt' %}Encrypted{% else %}Decrypted{% endif %}{% endif %}</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </main>
+
+        <!-- Features Section -->
+        <section class="features">
+            <h2 class="features-title">Why Choose Our Cipher Tool?</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4>Lightning Fast</h4>
+                    <p>Instant encryption and decryption with optimized algorithms</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h4>Fully Responsive</h4>
+                    <p>Works seamlessly on desktop, tablet, and mobile devices</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h4>Secure & Private</h4>
+                    <p>No data storage - your information remains confidential</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h4>Classic Algorithm</h4>
+                    <p>Uses the historic Caesar cipher method for reliable encryption</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy;Caesar Cipher Tool. Built with Python Flask.</p>
+        </footer>
+    </div>
+</body>
+</html>
