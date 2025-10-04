@@ -30,8 +30,8 @@ Built with a *Python Flask backend* and a responsive *HTML/CSS frontend*.
 
 1. *Clone the repository*
    bash
-   git clone https://github.com/yourusername/caesar-cipher.git
-   cd caesar-cipher
+   git clone https://github.com/jakkalilokesh/Caesar_Cipher_Tool.git
+   cd Caesar_Cipher_Tool
    
 
 2. *Create a virtual environment (recommended)*
@@ -52,19 +52,6 @@ Built with a *Python Flask backend* and a responsive *HTML/CSS frontend*.
 
 5. *Open your browser*  
    Navigate to 👉 [http://localhost:5000](http://localhost:5000)
-
----
-
-## 📁 Project Structure
-
-caesar-cipher/
-├── app.py                 # Main Flask application
-├── templates/
-│   └── index.html         # Main HTML template
-├── static/
-│   └── style.css          # CSS stylesheets
-└── README.md              # Project documentation
-
 
 ---
 
